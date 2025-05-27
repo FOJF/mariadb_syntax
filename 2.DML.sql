@@ -32,6 +32,9 @@ select 칼럼1, ... from 테이블명 [where row조건]; -- 모든 칼럼을 조
 -- where 조건에 and, or를 사용하여 조건 추가 가능
 select * from author where id > 2 and name = 'hong4';
 
+select * from author where id in (1,3,5);
+select * from author where id in (select id from where name='hong');
+
 -- distinct: 중복제거 조회
 select distinct name from author;
 
