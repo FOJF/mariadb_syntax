@@ -113,17 +113,43 @@ sismember memberlist m2
 scard posting:likes:1
 sismember posting:likes:1 a1@naver.com
 # 게시글에 좋아요를 하면
-sadd posting;likes:1 a1@naver.com
+sadd posting:likes:1 a1@naver.com
 # 좋아요한 사람을 클릭하면
 smembers posting:likes:1
 
 # zset : sorted set
 # zset을 활용해서 최근시간순으로 정렬가능
+# zset도 set이기 때문에 중복은 허용되지 않고, score만 업데이트 됨
 zadd user:1:recent:product 091330 mango
 zadd user:1:recent:product 091331 apple
 zadd user:1:recent:product 091332 banana
 zadd user:1:recent:product 091333 orange
-zadd user:1:recent:product 091327 apple
+zadd user:1:recent:product 091334 apple
 
 # zset 조회 : zrange(score 기준 오름차순), zrevrange(내림차순)
 zrange user:1:recent:product 0 2
+zrange user:1:recent:product -3 -1
+zrevrange user:1:recent:product 0 2
+revrange user:1:recent:product 0 2 withscores # withscores를 옵션으로 추가하면(스코어 값까지 같이 출력 가능)
+
+# 실시간으로 변동되는 정보 저장(주식 시세 저장)
+# 종목 : 삼성전자, 시세 : 55,000원, 시간 : 현재시간(유닉스 타임스탬프) -> 년원일시간을 초단위로 변환한 값
+
+zadd stock:price:se 1748911141 55000
+zadd stock:price:lg 1748911141 100000
+zadd stock:price:se 1748911142 55500
+
+# 최신 시세 조회
+zrevrange stock:price:se 0 0
+zrange stock:price:se -1 -1
+
+# hashes : value가 map 형태의 자료구조(key:value, key:value .. 형태의 자료구조)
+set member:info:1 "{\"name\":\"hong\", \"email\":\"hong@daum.net\", \"age\":30}"
+hset member:info:1 name hong email hong@duam.net age 30
+
+# 특정 값 조회
+hget member:info:1 name
+hget member:info:1 age
+
+# 특정 요소값 수정
+hset member:info:1 name hong2
